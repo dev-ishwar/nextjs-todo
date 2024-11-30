@@ -7,7 +7,7 @@ export default function LoginForm() {
     return (
         <Card>
             <h1 className="mb-8 p-3 text-xl uppercase bg-foreground text-background rounded-lg">Login</h1>
-            <form action="" className="border-b-2 mb-8 pb-8 text-left">
+            <form className="border-b-2 mb-8 pb-8 text-left">
                 <div className="flex flex-col gap-5 mx-auto w-[90%] md:w-[70%]">
                     <div className="flex flex-col gap-2 w-full">
                         <label htmlFor="email">Email</label>
@@ -19,7 +19,7 @@ export default function LoginForm() {
                     </div>
                     <button className={`${buttonStyle} rounded-md`}>Login</button>
                 </div>
-                <p className="mt-8 text-center">Don't have an account? <Link href={'/register'} className="underline">Register</Link></p>
+                <p className="mt-8 text-center">Don&apos;t have an account? <Link href={'/register'} className="underline">Register</Link></p>
             </form>
             <SocialLogin />
         </Card>

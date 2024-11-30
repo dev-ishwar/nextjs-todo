@@ -63,6 +63,7 @@ export async function addTodo(prevState: State, formdata: FormData) {
     try {
         await sql`INSERT INTO todos (title, description, dueDate, prioritize, status) VALUES (${title}, ${description}, ${dateISOString}, ${priority}, ${status})`
     } catch (error) {
+        console.log('error: ', error);
         return {
             message: 'DB Error. Failed to add todo.'
         }
@@ -98,6 +99,7 @@ export async function editTodo(id: string, prevState: State, formdata: FormData)
         WHERE id = ${id}
         `;
     } catch (error) {
+        console.log('error: ', error)
         return {
             message: 'DB Error. Failed to update todo.'
         }
@@ -115,6 +117,7 @@ export async function deleteTodo(id: string) {
         revalidatePath('/todos');
         return { message: 'Todo Deleted' };
     } catch (error) {
+        console.log('error: ', error)
         return {
             message: 'DB Error. Failed to delete todo.'
         }

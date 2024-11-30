@@ -27,7 +27,7 @@ export default function LoginForm() {
                 body: JSON.stringify({ name, email, password })
             });
 
-            response.status === 201 && router.push('/login');
+            if(response.status === 201) router.push('/login');
 
         } catch (error) {
             console.error(error);

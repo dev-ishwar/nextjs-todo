@@ -18,6 +18,7 @@ export async function fetchTodoById(id: string) {
         const data = await sql<Todo>`SELECT * FROM todos where id = ${id}`;
         return data.rows[0];
     } catch (error) {
+        console.error(error);
         throw new Error('Failed to fetch todo');
     }
 }

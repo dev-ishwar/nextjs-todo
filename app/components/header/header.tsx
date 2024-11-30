@@ -5,7 +5,7 @@ import Logout from "@/app/components/header/logout";
 
 export default async function Header() {
     const session = await auth();
-    const user = session?.user!;
+    const user = session?.user;
     return (
         <header className="flex items-center justify-between p-5">
             <span>TODO</span>
