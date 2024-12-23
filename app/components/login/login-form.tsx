@@ -6,7 +6,7 @@ import SocialLogin from "@/app/components/login/social-login";
 import Link from "next/link";
 import { loginWithCreds } from "@/app/lib/actions/auth-actions";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Loader from "@/app/loading";
 
 export default function LoginForm() {

@@ -1,6 +1,5 @@
 
 type TodoStatus = 'COMPLETED' | 'PENDING';
-type TodoType = 'YEARLY' | 'MONTHLY' | 'WEEKLY' | 'DAILY';
 
 export type Todo = {
     id: string,

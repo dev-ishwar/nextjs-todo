@@ -5,7 +5,7 @@ import { buttonStyle } from "@/app/lib/styles";
 import SocialLogin from "@/app/components/login/social-login";
 import Link from "next/link";
 import { FormEventHandler } from "react";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
     const router = useRouter();
