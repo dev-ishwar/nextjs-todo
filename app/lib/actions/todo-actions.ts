@@ -1,9 +1,10 @@
 'use server';
 
 import { z } from 'zod';
-import { sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { auth } from '@/auth';
+import prisma from '../prisma';
 
 const FormSchema = z.object({
     id: z.string(),
@@ -16,9 +17,6 @@ const FormSchema = z.object({
     })
         .min(1, { message: 'Enter description' }),
     dueDate: z.string().date(),
-    prioritize: z.string({
-        invalid_type_error: "Select priority"
-    }),
     status: z.enum(['COMPLETED', 'PENDING'], {
         invalid_type_error: 'Please select a task status'
     }),
@@ -26,13 +24,13 @@ const FormSchema = z.object({
 
 const AddTodo = FormSchema.omit({ id: true, status: true });
 const EditTodo = FormSchema.omit({ id: true });
+const UpdateStatus = FormSchema.pick({ id: true, status: true });
 
 export type State = {
     errors?: {
         title?: string[],
         description?: string[],
         dueDate?: string[],
-        prioritize?: string[],
         status?: string[],
     },
     message?: string | null,
@@ -44,7 +42,6 @@ export async function addTodo(prevState: State, formdata: FormData) {
         title: formdata.get('title'),
         description: formdata.get('description'),
         dueDate: formdata.get('dueDate'),
-        prioritize: formdata.get('prioritize'),
     })
 
     // Return early if form validation fails
@@ -56,12 +53,26 @@ export async function addTodo(prevState: State, formdata: FormData) {
     }
 
     // prepare data for insertion into DB
-    const { title, description, dueDate, prioritize } = validatedFields.data;
+    const { title, description, dueDate } = validatedFields.data;
     const status = 'PENDING';
-    const priority = prioritize === 'yes';
-    const dateISOString = dueDate; //default YYYY-MM-DD format returned from Date field
+
     try {
-        await sql`INSERT INTO todos (title, description, dueDate, prioritize, status) VALUES (${title}, ${description}, ${dateISOString}, ${priority}, ${status})`
+        // await sql`INSERT INTO todos (title, description, dueDate, status) VALUES (${title}, ${description}, ${dateISOString}, ${priority}, ${status})`
+        const session = await auth();
+        if (!session?.user?.email) {
+            return {
+                message: 'Session error. Please login again to continue.'
+            }
+        }
+        await prisma.task.create({
+            data: {
+                title: title,
+                description: description,
+                dueDate: dueDate,
+                status: status,
+                user: { connect: { email: session?.user?.email } }
+            },
+        })
     } catch (error) {
         console.log('error: ', error);
         return {
@@ -78,7 +89,6 @@ export async function editTodo(id: string, prevState: State, formdata: FormData)
         title: formdata.get('title'),
         description: formdata.get('description'),
         dueDate: formdata.get('dueDate'),
-        prioritize: formdata.get('prioritize'),
         status: formdata.get('status'),
     })
 
@@ -88,16 +98,18 @@ export async function editTodo(id: string, prevState: State, formdata: FormData)
             message: 'Missing fields. Failed to update todo.'
         }
     }
+    const { title, description, dueDate, status } = validatedFields.data;
 
-    console.log("validatedFields.data : ", validatedFields.data)
-    const { title, description, dueDate, prioritize, status } = validatedFields.data;
-    const dateISOString = dueDate;  //default YYYY-MM-DD format returned from Date field
     try {
-        await sql`
-        UPDATE todos
-        SET title = ${title}, description = ${description}, dueDate = ${dateISOString}, prioritize = ${prioritize}, status = ${status}
-        WHERE id = ${id}
-        `;
+        await prisma.task.update({
+            where: { id: id },
+            data: {
+                title: title,
+                description: description,
+                dueDate: dueDate,
+                status: status,
+            }
+        })
     } catch (error) {
         console.log('error: ', error)
         return {
@@ -109,17 +121,45 @@ export async function editTodo(id: string, prevState: State, formdata: FormData)
     redirect('/todos');
 }
 
-export async function deleteTodo(id: string) {
+export async function deleteTodo(id: string, prevState: State, formData: FormData) {
     try {
-        await sql`
-        DELETE FROM todos where id = ${id}
-        `;
+        await prisma.task.delete({
+            where: { id: id }
+        })
         revalidatePath('/todos');
-        return { message: 'Todo Deleted' };
+        return { message:  `Task deleted successfully.` };
     } catch (error) {
         console.log('error: ', error)
+        return { message:  `Failed to delete task` };
+    }
+}
+
+export async function updateTodoStatus(formdata: FormData) {
+    try {
+        const validatedFields = UpdateStatus.safeParse({
+            id: formdata.get('id'),
+            status: formdata.get('status')
+        })
+
+        if (!validatedFields.success) {
+            return {
+                errors: validatedFields.error.flatten().fieldErrors,
+                message: 'Missing status. Failed to update status.'
+            }
+        }
+
+        const { id, status } = validatedFields.data;
+        await prisma.task.update({
+            where: { id: id },
+            data: { status: status }
+        });
+        revalidatePath("/todos");
         return {
-            message: 'DB Error. Failed to delete todo.'
+            message: `Task updated successfully`
+        }
+    } catch (error) {
+        return {
+            message: error instanceof Error ? error.message : 'DB Error. Failed to update todo.'
         }
     }
 }

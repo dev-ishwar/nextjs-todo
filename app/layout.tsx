@@ -27,10 +27,10 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <Header />
-        {children}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased text-[--color-text] bg-[--color-background] `}
+      >        
+          <Header />
+          {children}
       </body>
     </html>
   );

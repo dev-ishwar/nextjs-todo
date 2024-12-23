@@ -5,11 +5,11 @@ import { buttonStyle } from "@/app/lib/styles";
 import SocialLogin from "@/app/components/login/social-login";
 import Link from "next/link";
 import { FormEventHandler } from "react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 
 export default function LoginForm() {
     const router = useRouter();
-
+    
     const handleSubmit: FormEventHandler<HTMLFormElement> = async (event) => {
         event.preventDefault();
 
@@ -27,8 +27,7 @@ export default function LoginForm() {
                 body: JSON.stringify({ name, email, password })
             });
 
-            if(response.status === 201) router.push('/login');
-
+            if (response.status === 201) router.push('/login');
         } catch (error) {
             console.error(error);
         }

@@ -5,12 +5,32 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  --color-background: #ececec;
+  --color-background-hover: rgba(236, 236, 236, 0.8);
+  --color-background-card: #fff;
+  --color-text: #000;
+  --color-primary: #444;
+  --color-control-border: #bbb;
+  --color-button-active-background: #f9f9f9;
+  --color-button-active-border: #aaa;
+  --color-separator: #ccc;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+  
+    --color-background: #161b22;
+    --color-background-hover: rgba(22, 27, 34, 0.8);
+    --color-background-card: #0d1117;
+    --color-text: #fff;
+    --color-primary: #ccc;
+    --color-control-border: #555;
+    --color-button-active-background: #060606;
+    --color-button-active-border: #666;
+    --color-separator: #444;
   }
 }
 
@@ -18,4 +38,9 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+input {
+  background-color: var(--color-background);
+  accent-color: var(--color-background-hover);
 }

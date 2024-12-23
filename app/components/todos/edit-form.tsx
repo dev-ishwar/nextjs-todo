@@ -18,8 +18,8 @@ export default function EditTodo({
     const editTodoWithId = editTodo.bind(null, todo.id)
     const [state, formAction, isPending] = useActionState(editTodoWithId, initialState);
 
-    return <form action={formAction} className="shadow-x mx-4">
-        <div className="rounded-t-md bg-black/10 p-4 md:p-6">
+    return <form action={formAction} className="shadow-x px-10">
+        <div className="rounded-t-md">
             <div className="mt-4">
                 <label
                     htmlFor="title"
@@ -31,7 +31,7 @@ export default function EditTodo({
                     id="title"
                     aria-describedby="title-error"
                     placeholder="Enter title"
-                    className="block w-full bg-black/10 rounded-md border border-gray-200 p-2 text-sm outline-2 placeholder:text-gray-500 "
+                    className="block w-full rounded-md border p-2 text-sm outline-2 "
                     defaultValue={todo.title}
                 />
                 <div id="title-error" aria-live="polite" aria-atomic="true">
@@ -43,7 +43,6 @@ export default function EditTodo({
                     }
                 </div>
             </div>
-
             <div className="mt-4">
                 <label
                     htmlFor="description"
@@ -55,8 +54,8 @@ export default function EditTodo({
                     id="description"
                     aria-describedby="description-error"
                     placeholder="Enter description"
-                    className="block w-full bg-black/10  rounded-md border border-gray-200 p-2 text-sm outline-2 placeholder:text-gray-500 "
-                    defaultValue={todo.description}
+                    className="block w-full  rounded-md border p-2 text-sm outline-2 "
+                    defaultValue={todo.description ?? ""}
                 />
                 <div id="description-error" aria-live="polite" aria-atomic="true">
                     {
@@ -77,9 +76,8 @@ export default function EditTodo({
                     name="dueDate"
                     id="dueDate"
                     aria-describedby="dueDate-error"
-                    className="block w-full bg-black/10 rounded-md border border-gray-200 p-2 text-sm outline-2 placeholder:text-gray-500 "
-                    defaultValue={todo.dueDate.toString()}
-                    onChange={e => console.log('e: ', e.target.value)}
+                    className="block w-full rounded-md border p-2 text-sm outline-2"
+                    defaultValue={todo.dueDate ?? ""}
                 />
                 <div id="dueDate-error" aria-live="polite" aria-atomic="true">
                     {
@@ -91,30 +89,7 @@ export default function EditTodo({
                 </div>
             </div>
             <fieldset className="mt-4">
-                <legend>Prioritize</legend>
-
-                <div className="flex gap-5">
-                    <div className="flex items-center gap-2">
-                        <input type="radio" name="prioritize" id="yes" value={'yes'} aria-describedby="prioritize-error" defaultChecked={todo.prioritize} />
-                        <label htmlFor="yes" className="text-sm font-medium">Yes</label>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <input type="radio" name="prioritize" id="no" value={'no'} aria-describedby="prioritize-error" defaultChecked={!todo.prioritize} />
-                        <label htmlFor="no" className="text-sm font-medium">No</label>
-                    </div>
-                </div>
-                <div id="prioritize-error" aria-live="polite" aria-atomic="true">
-                    {
-                        state.errors?.prioritize &&
-                        state.errors.prioritize.map((error: string) => (
-                            <p className="mt-2 text-sm text-red-500" key={error}>{error}</p>
-                        ))
-                    }
-                </div>
-            </fieldset>
-            <fieldset className="mt-4">
                 <legend>Status</legend>
-
                 <div className="flex gap-5">
                     <div className="flex items-center gap-2">
                         <input type="radio" name="status" id="completed" value={'COMPLETED'} aria-describedby="status-error" defaultChecked={todo.status === 'COMPLETED'} />
@@ -135,8 +110,8 @@ export default function EditTodo({
                 </div>
             </fieldset>
         </div>
-        <div className="flex justify-end gap-5 rounded-b-md bg-black/10 border-t-2 border-t-current p-4 md:p-6">
-            <LinkButton path="/todos" classNames="rounded-md" >Cancel</LinkButton>
+        <div className="flex justify-end gap-5 rounded-b-md border-t-2 border-t-[--color-separator] mt-4 md:mt-6 pt-4 md:pt-6">
+            <LinkButton path="/todos" aria-disabled={isPending} classNames="rounded-md" >Cancel</LinkButton>
             <Button type="submit" aria-disabled={isPending} className={buttonStyle} >Update</Button>
         </div>
     </form>

@@ -1,6 +1,6 @@
 import EditTodo from "@/app/components/todos/edit-form";
-// import { fetchTodoById } from "@/app/lib/data";
-import { todos } from "@/app/lib/dummyData";
+import { fetchTodoById } from "@/app/lib/data";
+import { notFound } from "next/navigation";
 
 export default async function EditTodoPage({
     params
@@ -8,9 +8,8 @@ export default async function EditTodoPage({
     params: Promise<{ id: string }>
 }>) {
     const id = (await params).id;
-    console.log(id);
-    // const todo = await fetchTodoById(id);
-    const todo = todos[1]
+    const todo = await fetchTodoById(id);
+    if (!todo) notFound();
     return (
         <main>
             <EditTodo todo={todo} />
